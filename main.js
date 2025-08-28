@@ -60,7 +60,7 @@ scene.add(dirLight);
 
 // Load GLB Model
 const loader = new GLTFLoader();
-loader.load('./model.glb', (gltf) => {
+loader.load('/model.glb', (gltf) => {
     scene.add(gltf.scene);
 
     const box = new THREE.Box3().setFromObject(gltf.scene);
@@ -126,3 +126,4 @@ window.addEventListener('keydown', (event) => {
         console.log('🔄 Switched to Orbit Controls');
     }
 });
+
