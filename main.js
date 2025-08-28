@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { FlyControls } from 'three/examples/jsm/controls/FlyControls.js';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
@@ -22,7 +23,7 @@ orbitControls.enableDamping = true;
 orbitControls.target.set(0, 1, 0);
 orbitControls.update();
 
-// Fly Controls (for FPS movement)
+// Fly Controls
 const flyControls = new FlyControls(camera, renderer.domElement);
 flyControls.movementSpeed = 30;
 flyControls.rollSpeed = Math.PI / 12;
@@ -31,24 +32,12 @@ flyControls.dragToLook = false;
 flyControls.enabled = true;
 flyControls.rollSpeed = 0.8;
 const originalUpdate = flyControls.update.bind(flyControls);
-
 flyControls.update = function (delta) {
     originalUpdate(delta);
-
-    // extract Euler angles from current rotation
     const euler = new THREE.Euler().setFromQuaternion(camera.quaternion, 'YXZ');
-
-    // lock pitch (x) and roll (z in this order depends on rotation order)
-    // no up/down
-    euler.z = 0;  // no banking/tilt
-
-    // keep only yaw
+    euler.z = 0; // lock roll
     camera.quaternion.setFromEuler(euler);
 };
-
-
-
-// Start disabled
 
 let activeControls = orbitControls; // Default
 
@@ -58,8 +47,16 @@ const dirLight = new THREE.DirectionalLight(0xffffff, 1);
 dirLight.position.set(5, 10, 7);
 scene.add(dirLight);
 
-// Load GLB Model
+// ✅ Draco loader setup
 const loader = new GLTFLoader();
+const dracoLoader = new DRACOLoader();
+// Option 1: Use Google’s hosted decoder (no need to upload files)
+dracoLoader.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
+// Option 2: If you downloaded draco folder → put it in /public/draco/ and use:
+// dracoLoader.setDecoderPath('/draco/');
+loader.setDRACOLoader(dracoLoader);
+
+// Load GLB Model
 loader.load('/model.glb', (gltf) => {
     scene.add(gltf.scene);
 
@@ -126,6 +123,3 @@ window.addEventListener('keydown', (event) => {
         console.log('🔄 Switched to Orbit Controls');
     }
 });
-
-
-
