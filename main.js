@@ -80,7 +80,7 @@ pmremGenerator.compileEquirectangularShader();
 
 new EXRLoader()
     .setPath('/')
-    .load('/sky.exr', (texture) => {
+    .load('sky.exr', (texture) => {
         const envMap = pmremGenerator.fromEquirectangular(texture).texture;
         scene.environment = envMap;
         scene.background = envMap;
@@ -126,5 +126,6 @@ window.addEventListener('keydown', (event) => {
         console.log('🔄 Switched to Orbit Controls');
     }
 });
+
 
 
